@@ -419,9 +419,9 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
             [_sourceImageMap removeObjectForKey:entityUUID];
             [_indexMap removeObjectForKey:entityUUID];
             [_occupiedIndexes removeIndex:index];
-            NSInteger index = [_MRUEntries indexOfObject:entityUUID];
-            if (index != NSNotFound) {
-                [_MRUEntries removeObjectAtIndex:index];
+            NSInteger indexLocal = [_MRUEntries indexOfObject:entityUUID];
+            if (indexLocal != NSNotFound) {
+                [_MRUEntries removeObjectAtIndex:indexLocal];
             }
             [self saveMetadata];
         }
@@ -471,7 +471,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         int result = ftruncate(_fileDescriptor, fileLength);
         
         if (result != 0) {
-            NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s ftruncate returned %d, error = %d, fd = %d, filePath = %@, length = %lld", __PRETTY_FUNCTION__, result, errno, _fileDescriptor, _filePath, fileLength];
+            NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s ftruncate returned %d, error = %d, fd = %d, filePath = %@, length = %lld", __PRETTY_FUNCTION__, result, errno, _fileDescriptor, _filePath, (long long)fileLength];
             [self.imageCache _logMessage:message];
         } else {
             _fileLength = fileLength;
@@ -679,7 +679,7 @@ static void _FICReleaseImageData(void *info, const void *data, size_t size) {
         NSData *data = [NSPropertyListSerialization dataWithPropertyList:metadataDictionary format:NSPropertyListBinaryFormat_v1_0 options:0 error:NULL];
         BOOL fileWriteResult = [data writeToFile:[self metadataFilePath] atomically:NO];
         if (fileWriteResult == NO) {
-            NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [_imageFormat name]];
+            NSString *message = [NSString stringWithFormat:@"*** FIC Error: %s couldn't write metadata for format %@", __PRETTY_FUNCTION__, [self->_imageFormat name]];
             [self.imageCache _logMessage:message];
         }
     });

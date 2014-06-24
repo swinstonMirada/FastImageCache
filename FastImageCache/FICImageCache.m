@@ -196,10 +196,10 @@ static FICImageCache *__imageCache = nil;
                 NSMutableDictionary *requestDictionary = [_requests objectForKey:sourceImageURL];
                 if (requestDictionary == nil) {
                     // If we're here, then we aren't currently fetching this image.
-                    NSMutableDictionary *requestDictionary = [NSMutableDictionary dictionary];
-                    [_requests setObject:requestDictionary forKey:sourceImageURL];
+                    NSMutableDictionary *requestDictionaryLocal = [NSMutableDictionary dictionary];
+                    [_requests setObject:requestDictionaryLocal forKey:sourceImageURL];
                     
-                    _FICAddCompletionBlockForEntity(formatName, requestDictionary, entity, completionBlock);
+                    _FICAddCompletionBlockForEntity(formatName, requestDictionaryLocal, entity, completionBlock);
                     [_delegate imageCache:self wantsSourceImageForEntity:entity withFormatName:formatName completionBlock:^(UIImage *sourceImage) {
                         [self _imageDidLoad:sourceImage forURL:sourceImageURL];
                     }];
@@ -309,10 +309,10 @@ static void _FICAddCompletionBlockForEntity(NSString *formatName, NSMutableDicti
         }
         // All of the formats in a given family use the same source asset, so once we have that source asset, we can generate all of the family's formats.
         for (FICImageTable *table in [_imageTables allValues]) {
-            FICImageFormat *imageFormat = [table imageFormat];
-            NSString *tableFormatFamily = [imageFormat family];
+            FICImageFormat *imageFormatLocal = [table imageFormat];
+            NSString *tableFormatFamily = [imageFormatLocal family];
             if ([formatFamily isEqualToString:tableFormatFamily]) {
-                NSArray *completionBlocks = [completionBlocksDictionary objectForKey:[imageFormat name]];
+                NSArray *completionBlocks = [completionBlocksDictionary objectForKey:[imageFormatLocal name]];
                 
                 BOOL imageExistsForEntity = [table entryExistsForEntityUUID:entityUUID sourceImageUUID:sourceImageUUID];
                 BOOL shouldProcessFamilyFormat = shouldProcessAllFormatsInFamily && imageExistsForEntity == NO;
